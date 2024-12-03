@@ -1,0 +1,34 @@
+import hashlib
+import string
+import random
+
+def login_info(username,password): # This is to take user login information to compare to the sotred user credentials
+    user = username
+    pw = password
+    logincreds = [user,pw]
+    return logincreds
+
+credentials = login_info("HDumpart","England") # Calls the function that accepts login info
+logins = open("LoginAttemptsLog.txt","a") # Opens the logins doc
+logins.write("\n"+credentials[0])
+logins.close()
+
+verification = open("UserCredentials.txt","r") # Opens the credentials doc to read the user info
+verif = verification.read() # Saves the user credentials and splits them into a list
+veriflist = verif.split()
+verification.close()
+usern = credentials[0]
+
+if usern in veriflist:
+    useridentified = veriflist.index(credentials[0]) # Isolates the username of the person loging in, the header of the doc is 3 entries long
+    pwcomparesalt = credentials[1] + veriflist[useridentified+1].strip() # Salts the password using the found salt and strips leading and trailing spaces
+    pwcomp = hashlib.sha256(pwcomparesalt.encode()) # Hashes the salted password
+    pwcompare = pwcomp.hexdigest() # Makes it readable
+    pwidentified = veriflist[useridentified+2] # Identifies the actual password
+
+    if pwcompare == pwidentified:
+        print("User is verified")
+    else:
+        print("Invalid credentials")
+else:
+    print("Invalid user")
