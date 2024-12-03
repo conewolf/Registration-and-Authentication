@@ -1,0 +1,22 @@
+mport hashlib
+import string
+import random
+
+def signup_info(username,password): # This is to salt and hash user credentials in order to store them
+    user = username
+    salt = "".join(random.choices(string.ascii_letters + string.punctuation,k=16)) # Creates the salt for the password
+    salting = password + salt # Salts the password
+    pw = hashlib.sha256(salting.encode()) # Hashes the password
+    regcreds = [user,salt,pw.hexdigest()] # Creates the list to add to the document
+    return regcreds
+
+registration = signup_info("Dante","Cosmoteer") # Calls the registration function
+usercreds = open("UserCredentials.txt","a") # Opens the user credentials to store the new user credentials
+for i in range(3):
+    if i == 0:
+        usercreds.write("\n"+registration[i]) # Starts a new line for readability on the document
+        usercreds.write(" ")
+    else:
+        usercreds.write(registration[i])
+        usercreds.write(" ")
+usercreds.close()
